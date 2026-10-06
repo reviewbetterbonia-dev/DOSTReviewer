@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">DOST Reviewer</string>
+    <string name="firebase_api_key">AIzaSyDaJlQNtj_sqH57nR7beHrDsR8PFudMyPg</string>
+    <string name="firebase_app_id">1:153207449019:android:18dc701ab364b20298509e</string>
+    <string name="firebase_project_id">dost-uge-reviewer</string>
+    <string name="github_repo_owner">reviewbetterbonia-dev</string>
+    <string name="github_repo_name">DOSTReviewer</string>
+</resources>

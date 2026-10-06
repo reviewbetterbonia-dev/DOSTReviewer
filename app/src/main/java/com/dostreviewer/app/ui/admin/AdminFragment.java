@@ -1,0 +1,214 @@
+package com.dostreviewer.app.ui.admin;
+
+import android.app.AlertDialog;
+import android.content.Context;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.view.*;
+import android.widget.*;
+
+import androidx.annotation.Nullable;
+
+import com.dostreviewer.app.data.FirebaseRepository;
+import com.dostreviewer.app.model.QuizResult;
+import com.dostreviewer.app.ui.*;
+
+import java.util.*;
+
+public class AdminFragment extends BaseFragment {
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Context x = requireContext();
+        LinearLayout p = Ui.page(x);
+        Ui.add(p, Ui.heading(x, "Admin tools"), Ui.dp(x, 42));
+
+        if (app().isAdmin()) {
+            Button add = Ui.button(x, "＋ Add question", true);
+            add.setOnClickListener(v -> app().navigate(new AddQuestionFragment(), true));
+            Ui.add(p, add, Ui.dp(x, 56));
+
+            Ui.add(p, Ui.gap(x, 8), Ui.dp(x, 8));
+            Button review = Ui.button(x, "Review pending questions", false);
+            review.setOnClickListener(v -> showPendingSubmissions(x));
+            Ui.add(p, review, Ui.dp(x, 56));
+
+            LinearLayout userCard = Ui.card(x);
+            userCard.addView(Ui.text(x, "User Profiles & Management", 18, true));
+            userCard.addView(Ui.muted(x, "View user profiles, search accounts, and manage user progress.", 13));
+
+            Button manageUsers = Ui.button(x, "View & Manage Users", false);
+            manageUsers.setOnClickListener(v -> app().navigate(new ManageUsersFragment(), true));
+            userCard.addView(manageUsers, new LinearLayout.LayoutParams(-1, Ui.dp(x, 50)));
+            p.addView(userCard);
+        }
+
+        if (app().isSuperAdmin()) {
+            Ui.add(p, Ui.gap(x, 8), Ui.dp(x, 8));
+            LinearLayout superCard = Ui.card(x);
+            superCard.addView(Ui.text(x, "Super Admin Controls", 18, true));
+            superCard.addView(Ui.muted(x, "Manage global user scores and clean up accounts.", 13));
+
+            Button resetScores = Ui.button(x, "Reset All User Scores", false);
+            resetScores.setOnClickListener(v -> {
+                new AlertDialog.Builder(x)
+                        .setTitle("Reset All Scores?")
+                        .setMessage("This will reset the rating points and rank of every user to 0 (Freshman) and clear ranked data. Continue?")
+                        .setNegativeButton("Cancel", null)
+                        .setPositiveButton("Reset", (d, w) -> {
+                            long now = System.currentTimeMillis();
+                            app().local.setRankedClearedTime(now);
+                            List<QuizResult> kept = new ArrayList<>();
+                            for (QuizResult r : app().local.results()) {
+                                boolean isRanked = r.mode != null && r.mode.toLowerCase(Locale.US).contains("ranked");
+                                if (!isRanked) kept.add(r);
+                            }
+                            app().local.replaceResults(kept);
+                            app().rating = 0;
+                            app().rank = "Freshman";
+                            app().local.prefs().edit().putInt("ranked_rating", 0).apply();
+
+                            if (app().isOffline()) {
+                                Toast.makeText(x, "Local scores and ranked data reset.", Toast.LENGTH_SHORT).show();
+                            } else {
+                                app().firebase.resetAllScores(ok -> Toast.makeText(x, ok ? "All user scores and ranked data reset successfully." : "Could not reset scores.", Toast.LENGTH_SHORT).show());
+                            }
+                        })
+                        .show();
+            });
+            superCard.addView(resetScores, new LinearLayout.LayoutParams(-1, Ui.dp(x, 50)));
+
+            superCard.addView(Ui.gap(x, 8));
+            Button clearData = Ui.button(x, "Clear All Users Data", false);
+            clearData.setBackgroundColor(Color.parseColor("#E53935"));
+            clearData.setTextColor(Color.WHITE);
+            clearData.setOnClickListener(v -> {
+                new AlertDialog.Builder(x)
+                        .setTitle("Clear All Users Data?")
+                        .setMessage("WARNING: This will permanently delete ALL user accounts and quiz results from the system (including your own account). Continue?")
+                        .setNegativeButton("Cancel", null)
+                        .setPositiveButton("Clear Everything", (d, w) -> {
+                            if (app().isOffline()) {
+                                app().local.prefs().edit().clear().apply();
+                                app().signOut();
+                                Toast.makeText(x, "Local data cleared.", Toast.LENGTH_SHORT).show();
+                            } else {
+                                app().firebase.clearAllUsersData(ok -> {
+                                    if (ok) {
+                                        app().local.prefs().edit().clear().apply();
+                                        Toast.makeText(x, "All users data cleared.", Toast.LENGTH_LONG).show();
+                                        app().signOut();
+                                    } else {
+                                        Toast.makeText(x, "Could not clear data.", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        })
+                        .show();
+            });
+            superCard.addView(clearData, new LinearLayout.LayoutParams(-1, Ui.dp(x, 50)));
+
+            p.addView(superCard);
+            Ui.add(p, Ui.gap(x, 10), Ui.dp(x, 10));
+        }
+
+        Ui.addWeight(p, new Space(x));
+
+        Button back = Ui.button(x, "Back", false);
+        back.setOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
+        Ui.add(p, back, Ui.dp(x, 52));
+        return p;
+    }
+
+    private void showPendingSubmissions(Context x) {
+        if (!app().firebase.online) {
+            Toast.makeText(x, "Firebase is not available.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        app().firebase.loadPendingQuestionSubmissions(submissions -> {
+            if (submissions.isEmpty()) {
+                Toast.makeText(x, "There are no pending question submissions.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            ScrollView scroll = new ScrollView(x);
+            LinearLayout body = new LinearLayout(x);
+            body.setOrientation(LinearLayout.VERTICAL);
+            body.setPadding(Ui.dp(x, 4), Ui.dp(x, 4), Ui.dp(x, 4), Ui.dp(x, 4));
+            scroll.addView(body);
+
+            AlertDialog dialog = new AlertDialog.Builder(x)
+                    .setTitle("Pending questions (" + submissions.size() + ")")
+                    .setView(scroll)
+                    .setNegativeButton("Close", null)
+                    .create();
+
+            for (FirebaseRepository.QuestionSubmissionRow row : submissions) {
+                LinearLayout card = Ui.card(x);
+                TextView meta = Ui.muted(x,
+                        row.subject + " • " + row.category + "\n" +
+                                "CSV: " + row.targetFile + "\n" +
+                                "Submitted by: " + (row.submittedByName.isEmpty() ? row.submittedBy : row.submittedByName),
+                        12);
+                card.addView(meta);
+                card.addView(Ui.gap(x, 4));
+                card.addView(Ui.text(x, row.question, 15, true));
+                card.addView(Ui.text(x, "A. " + row.choiceA + "\nB. " + row.choiceB + "\nC. " + row.choiceC + "\nD. " + row.choiceD, 13, false));
+                card.addView(Ui.muted(x, "Correct answer: " + row.correct, 12));
+
+                LinearLayout actions = new LinearLayout(x);
+                actions.setOrientation(LinearLayout.HORIZONTAL);
+                actions.setPadding(0, Ui.dp(x, 8), 0, 0);
+
+                Button reject = Ui.button(x, "Reject", false);
+                Button approve = Ui.button(x, "Approve", true);
+                actions.addView(reject, new LinearLayout.LayoutParams(0, Ui.dp(x, 50), 1));
+                actions.addView(Ui.gap(x, 8), new LinearLayout.LayoutParams(Ui.dp(x, 8), 1));
+                actions.addView(approve, new LinearLayout.LayoutParams(0, Ui.dp(x, 50), 1));
+                card.addView(actions);
+
+                reject.setOnClickListener(v -> {
+                    final EditText reason = new EditText(x);
+                    reason.setHint("Optional rejection reason");
+                    new AlertDialog.Builder(x)
+                            .setTitle("Reject question?")
+                            .setView(reason)
+                            .setNegativeButton("Cancel", null)
+                            .setPositiveButton("Reject", (d, w) -> app().firebase.rejectQuestionSubmission(
+                                    app().user.uid,
+                                    row.submissionId,
+                                    reason.getText().toString(),
+                                    ok -> {
+                                        Toast.makeText(x, ok ? "Question rejected." : "Could not reject question.", Toast.LENGTH_SHORT).show();
+                                        if (ok) dialog.dismiss();
+                                    }
+                            ))
+                            .show();
+                });
+
+                approve.setOnClickListener(v -> new AlertDialog.Builder(x)
+                        .setTitle("Approve question?")
+                        .setMessage("This will publish the question to Firebase immediately and make it available to app users. It will also be included in the next GitHub CSV synchronization.")
+                        .setNegativeButton("Cancel", null)
+                        .setPositiveButton("Approve", (d, w) -> app().firebase.approveQuestionSubmission(
+                                app().user.uid,
+                                row,
+                                ok -> {
+                                    Toast.makeText(x, ok ? "Question approved and published." : "Could not approve question.", Toast.LENGTH_SHORT).show();
+                                    if (ok) {
+                                        app().firebase.loadActiveQuestions(qs -> app().quiz.mergeRemoteQuestions(qs));
+                                        dialog.dismiss();
+                                    }
+                                }
+                        ))
+                        .show());
+
+                body.addView(card, new LinearLayout.LayoutParams(-1, -2));
+                Ui.add(body, Ui.gap(x, 10), Ui.dp(x, 10));
+            }
+
+            dialog.show();
+        });
+    }
+}
