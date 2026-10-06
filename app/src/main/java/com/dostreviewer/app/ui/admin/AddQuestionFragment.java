@@ -259,7 +259,7 @@ public class AddQuestionFragment extends BaseFragment {
         }
 
         // 2. Also save to target project asset path if running in dev host environment
-        File projectFile = new File("C:/Users/ACER/Documents/Github/DOST Reviewer/app/src/main/assets/questions/addedQuestions.csv");
+        File projectFile = new File("C:/Users/ACER/Documents/Github/DOSTReviewer/app/src/main/assets/questions/addedQuestions.csv");
         if (projectFile.exists() || (projectFile.getParentFile() != null && projectFile.getParentFile().exists())) {
             try {
                 boolean projNeedHeader = !projectFile.exists() || projectFile.length() == 0;
