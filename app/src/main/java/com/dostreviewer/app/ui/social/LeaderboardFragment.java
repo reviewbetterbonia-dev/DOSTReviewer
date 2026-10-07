@@ -17,8 +17,9 @@ import java.util.*;
 
 public class LeaderboardFragment extends BaseFragment {
     private static final String MATH = "Math";
-    private static final String MACHINE_DESIGN = "Machine Design";
-    private static final String POWERPLANT = "Powerplant";
+    private static final String SCIENCE = "Science";
+    private static final String REASONING = "Reasoning";
+    private static final String ENGLISH = "English";
     private static final String RATING = "Rating";
 
     private String currentFilter = RATING;
@@ -26,7 +27,7 @@ public class LeaderboardFragment extends BaseFragment {
     private LinearLayout tableContainer, leaderCard;
     private TextView leaderNameView, leaderPointsView;
     private View currentBadgeView;
-    private Button btnRating, btnMath, btnMachine, btnPower;
+    private Button btnRating, btnMath, btnScience, btnReasoning, btnEnglish;
 
     @Nullable
     public View onCreateView(LayoutInflater i, ViewGroup c, Bundle b) {
@@ -43,16 +44,19 @@ public class LeaderboardFragment extends BaseFragment {
 
         btnRating = filterButton(x, "Rating", RATING);
         btnMath = filterButton(x, "Math", MATH);
-        btnMachine = filterButton(x, "Machine Design", MACHINE_DESIGN);
-        btnPower = filterButton(x, "Powerplant", POWERPLANT);
+        btnScience = filterButton(x, "Science", SCIENCE);
+        btnReasoning = filterButton(x, "Reasoning", REASONING);
+        btnEnglish = filterButton(x, "English", ENGLISH);
 
         filterRow.addView(btnRating);
         filterRow.addView(Ui.gap(x, 8));
         filterRow.addView(btnMath);
         filterRow.addView(Ui.gap(x, 8));
-        filterRow.addView(btnMachine);
+        filterRow.addView(btnScience);
         filterRow.addView(Ui.gap(x, 8));
-        filterRow.addView(btnPower);
+        filterRow.addView(btnReasoning);
+        filterRow.addView(Ui.gap(x, 8));
+        filterRow.addView(btnEnglish);
 
         p.addView(filterScroll);
         Ui.add(p, Ui.gap(x, 12), Ui.dp(x, 12));
@@ -98,13 +102,17 @@ public class LeaderboardFragment extends BaseFragment {
             title = "WIZARD";
             bgColor = Color.parseColor("#E53935");
             glow = false;
-        } else if (MACHINE_DESIGN.equals(currentFilter)) {
-            title = "MECHANIC";
+        } else if (SCIENCE.equals(currentFilter)) {
+            title = "SCIENTIST";
             bgColor = Color.parseColor("#1E88E5");
             glow = false;
-        } else if (POWERPLANT.equals(currentFilter)) {
-            title = "ALCHEMIST";
+        } else if (REASONING.equals(currentFilter)) {
+            title = "LOGICIAN";
             bgColor = Color.parseColor("#43A047");
+            glow = false;
+        } else if (ENGLISH.equals(currentFilter)) {
+            title = "LINGUIST";
+            bgColor = Color.parseColor("#AB47BC");
             glow = false;
         } else {
             title = "GOAT";
@@ -158,8 +166,9 @@ public class LeaderboardFragment extends BaseFragment {
     private void updateFilterButtons() {
         styleButton(btnRating, RATING.equals(currentFilter));
         styleButton(btnMath, MATH.equals(currentFilter));
-        styleButton(btnMachine, MACHINE_DESIGN.equals(currentFilter));
-        styleButton(btnPower, POWERPLANT.equals(currentFilter));
+        styleButton(btnScience, SCIENCE.equals(currentFilter));
+        styleButton(btnReasoning, REASONING.equals(currentFilter));
+        styleButton(btnEnglish, ENGLISH.equals(currentFilter));
     }
 
     private void styleButton(Button b, boolean selected) {
@@ -253,10 +262,12 @@ public class LeaderboardFragment extends BaseFragment {
         for (Player p : allPlayers) {
             if (MATH.equals(currentFilter)) {
                 if (p.math > 0) players.add(p);
-            } else if (MACHINE_DESIGN.equals(currentFilter)) {
-                if (p.machineDesign > 0) players.add(p);
-            } else if (POWERPLANT.equals(currentFilter)) {
-                if (p.powerplant > 0) players.add(p);
+            } else if (SCIENCE.equals(currentFilter)) {
+                if (p.science > 0) players.add(p);
+            } else if (REASONING.equals(currentFilter)) {
+                if (p.reasoning > 0) players.add(p);
+            } else if (ENGLISH.equals(currentFilter)) {
+                if (p.english > 0) players.add(p);
             } else {
                 if (p.rating > 0 || p.total > 0) players.add(p);
             }
@@ -266,10 +277,12 @@ public class LeaderboardFragment extends BaseFragment {
             int cmp = 0;
             if (MATH.equals(currentFilter)) {
                 cmp = Integer.compare(b.math, a.math);
-            } else if (MACHINE_DESIGN.equals(currentFilter)) {
-                cmp = Integer.compare(b.machineDesign, a.machineDesign);
-            } else if (POWERPLANT.equals(currentFilter)) {
-                cmp = Integer.compare(b.powerplant, a.powerplant);
+            } else if (SCIENCE.equals(currentFilter)) {
+                cmp = Integer.compare(b.science, a.science);
+            } else if (REASONING.equals(currentFilter)) {
+                cmp = Integer.compare(b.reasoning, a.reasoning);
+            } else if (ENGLISH.equals(currentFilter)) {
+                cmp = Integer.compare(b.english, a.english);
             } else {
                 cmp = Integer.compare(b.rating, a.rating);
                 if (cmp == 0) cmp = Integer.compare(b.total, a.total);
@@ -280,7 +293,7 @@ public class LeaderboardFragment extends BaseFragment {
 
         if (players.isEmpty()) {
             leaderNameView.setText("No scores yet");
-            leaderPointsView.setText("Complete a Math, Machine Design, or Powerplant quiz to appear here.");
+            leaderPointsView.setText("Complete a Math, Science, Reasoning, or English quiz to appear here.");
             tableContainer.removeAllViews();
             return;
         }
@@ -289,11 +302,12 @@ public class LeaderboardFragment extends BaseFragment {
         leaderNameView.setText(leader.name);
         String leaderMetric;
         if (MATH.equals(currentFilter)) leaderMetric = leader.math + " Math points";
-        else if (MACHINE_DESIGN.equals(currentFilter)) leaderMetric = leader.machineDesign + " Machine Design points";
-        else if (POWERPLANT.equals(currentFilter)) leaderMetric = leader.powerplant + " Powerplant points";
+        else if (SCIENCE.equals(currentFilter)) leaderMetric = leader.science + " Science points";
+        else if (REASONING.equals(currentFilter)) leaderMetric = leader.reasoning + " Reasoning points";
+        else if (ENGLISH.equals(currentFilter)) leaderMetric = leader.english + " English points";
         else leaderMetric = leader.rating + " rating points";
 
-        leaderPointsView.setText(leaderMetric + "  •  Math " + leader.math + "  •  MD " + leader.machineDesign + "  •  Power " + leader.powerplant);
+        leaderPointsView.setText(leaderMetric + "  •  Math " + leader.math + "  •  Sci " + leader.science + "  •  Rea " + leader.reasoning + "  •  Eng " + leader.english);
 
         tableContainer.removeAllViews();
         tableContainer.addView(header(x));
@@ -308,12 +322,15 @@ public class LeaderboardFragment extends BaseFragment {
         if (MATH.equals(currentFilter)) {
             addCell(r, x, "PLAYER", 240, true);
             addCell(r, x, "MATH", 120, true);
-        } else if (MACHINE_DESIGN.equals(currentFilter)) {
+        } else if (SCIENCE.equals(currentFilter)) {
             addCell(r, x, "PLAYER", 200, true);
-            addCell(r, x, "MACHINE DESIGN", 160, true);
-        } else if (POWERPLANT.equals(currentFilter)) {
+            addCell(r, x, "SCIENCE", 160, true);
+        } else if (REASONING.equals(currentFilter)) {
             addCell(r, x, "PLAYER", 200, true);
-            addCell(r, x, "POWERPLANT", 160, true);
+            addCell(r, x, "REASONING", 160, true);
+        } else if (ENGLISH.equals(currentFilter)) {
+            addCell(r, x, "PLAYER", 200, true);
+            addCell(r, x, "ENGLISH", 160, true);
         } else {
             addCell(r, x, "PLAYER", 240, true);
             addCell(r, x, "RATING", 120, true);
@@ -327,12 +344,15 @@ public class LeaderboardFragment extends BaseFragment {
         if (MATH.equals(currentFilter)) {
             addCell(r, x, rank + ".  " + p.name, 240, false);
             addCell(r, x, String.valueOf(p.math), 120, true);
-        } else if (MACHINE_DESIGN.equals(currentFilter)) {
+        } else if (SCIENCE.equals(currentFilter)) {
             addCell(r, x, rank + ".  " + p.name, 200, false);
-            addCell(r, x, String.valueOf(p.machineDesign), 160, true);
-        } else if (POWERPLANT.equals(currentFilter)) {
+            addCell(r, x, String.valueOf(p.science), 160, true);
+        } else if (REASONING.equals(currentFilter)) {
             addCell(r, x, rank + ".  " + p.name, 200, false);
-            addCell(r, x, String.valueOf(p.powerplant), 160, true);
+            addCell(r, x, String.valueOf(p.reasoning), 160, true);
+        } else if (ENGLISH.equals(currentFilter)) {
+            addCell(r, x, rank + ".  " + p.name, 200, false);
+            addCell(r, x, String.valueOf(p.english), 160, true);
         } else {
             addCell(r, x, rank + ".  " + p.name, 240, false);
             addCell(r, x, String.valueOf(p.rating), 120, true);
@@ -355,14 +375,15 @@ public class LeaderboardFragment extends BaseFragment {
 
     private String displaySubject(String subject) {
         if (subject == null) return "";
-        if (subject.equalsIgnoreCase("Math") || subject.equalsIgnoreCase("Math")) return MATH;
-        if (subject.equalsIgnoreCase("Machine Design")) return MACHINE_DESIGN;
-        if (subject.equalsIgnoreCase("Powerplant") || subject.equalsIgnoreCase("Power Plant")) return POWERPLANT;
+        if (subject.equalsIgnoreCase("Math")) return MATH;
+        if (subject.equalsIgnoreCase("Science") || subject.equalsIgnoreCase("Machine Design")) return SCIENCE;
+        if (subject.equalsIgnoreCase("Reasoning") || subject.equalsIgnoreCase("Powerplant") || subject.equalsIgnoreCase("Power Plant")) return REASONING;
+        if (subject.equalsIgnoreCase("English")) return ENGLISH;
         return subject;
     }
 
     private boolean isTrackedSubject(String subject) {
-        return MATH.equals(subject) || MACHINE_DESIGN.equals(subject) || POWERPLANT.equals(subject);
+        return MATH.equals(subject) || SCIENCE.equals(subject) || REASONING.equals(subject) || ENGLISH.equals(subject);
     }
 
     private static class Player {
@@ -372,7 +393,7 @@ public class LeaderboardFragment extends BaseFragment {
         String role = "student";
         String rank = "Freshman";
         int rating;
-        int total, math, machineDesign, powerplant;
+        int total, math, science, reasoning, english;
 
         Player(String uid, String name) {
             this.uid = uid;
@@ -382,8 +403,9 @@ public class LeaderboardFragment extends BaseFragment {
         void add(String subject, int points) {
             total += points;
             if (MATH.equals(subject)) math += points;
-            else if (MACHINE_DESIGN.equals(subject)) machineDesign += points;
-            else if (POWERPLANT.equals(subject)) powerplant += points;
+            else if (SCIENCE.equals(subject)) science += points;
+            else if (REASONING.equals(subject)) reasoning += points;
+            else if (ENGLISH.equals(subject)) english += points;
         }
     }
 }

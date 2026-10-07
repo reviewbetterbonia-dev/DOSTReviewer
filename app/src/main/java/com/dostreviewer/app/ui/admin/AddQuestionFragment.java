@@ -58,7 +58,7 @@ public class AddQuestionFragment extends BaseFragment {
 
         // Public subject spinner
         Spinner publicSubjectSpinner = new Spinner(x);
-        String[] publicSubjects = new String[]{"Math", "Machine Design", "Powerplant"};
+        String[] publicSubjects = new String[]{"Math", "Science", "Reasoning", "English"};
         publicSubjectSpinner.setAdapter(new ArrayAdapter<>(
                 x,
                 android.R.layout.simple_spinner_dropdown_item,
@@ -89,10 +89,12 @@ public class AddQuestionFragment extends BaseFragment {
                 String subj = publicSubjects[position];
                 if ("Math".equalsIgnoreCase(subj)) {
                     targetInfoText.setText("Will be saved under math/addedQuestions.csv upon admin approval.");
-                } else if ("Machine Design".equalsIgnoreCase(subj)) {
-                    targetInfoText.setText("Will be saved under machinedesign/addedQuestions.csv upon admin approval.");
-                } else if ("Powerplant".equalsIgnoreCase(subj)) {
-                    targetInfoText.setText("Will be saved under powerplant/addedQuestions.csv upon admin approval.");
+                } else if ("Science".equalsIgnoreCase(subj)) {
+                    targetInfoText.setText("Will be saved under science/addedQuestions.csv upon admin approval.");
+                } else if ("Reasoning".equalsIgnoreCase(subj)) {
+                    targetInfoText.setText("Will be saved under reasoning/addedQuestions.csv upon admin approval.");
+                } else if ("English".equalsIgnoreCase(subj)) {
+                    targetInfoText.setText("Will be saved under english/addedQuestions.csv upon admin approval.");
                 }
             }
 
@@ -162,10 +164,12 @@ public class AddQuestionFragment extends BaseFragment {
                 String targetFile;
                 if ("Math".equalsIgnoreCase(selectedSubject)) {
                     targetFile = "math/addedQuestions.csv";
-                } else if ("Machine Design".equalsIgnoreCase(selectedSubject)) {
-                    targetFile = "machinedesign/addedQuestions.csv";
+                } else if ("Science".equalsIgnoreCase(selectedSubject)) {
+                    targetFile = "science/addedQuestions.csv";
+                } else if ("Reasoning".equalsIgnoreCase(selectedSubject)) {
+                    targetFile = "reasoning/addedQuestions.csv";
                 } else {
-                    targetFile = "powerplant/addedQuestions.csv";
+                    targetFile = "english/addedQuestions.csv";
                 }
 
                 app().firebase.submitQuestion(

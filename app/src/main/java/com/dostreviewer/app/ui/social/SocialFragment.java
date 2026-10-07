@@ -169,10 +169,12 @@ public class SocialFragment extends BaseFragment {
                         titleRow.addView(createBadge(x, "GOAT", Color.parseColor("#212121"), true));
                     } else if ("Wizard".equals(t)) {
                         titleRow.addView(createBadge(x, "Wizard", Color.parseColor("#E53935"), false));
-                    } else if ("Mechanic".equals(t)) {
-                        titleRow.addView(createBadge(x, "Mechanic", Color.parseColor("#1E88E5"), false));
-                    } else if ("Alchemist".equals(t)) {
-                        titleRow.addView(createBadge(x, "Alchemist", Color.parseColor("#43A047"), false));
+                    } else if ("Scientist".equals(t)) {
+                        titleRow.addView(createBadge(x, "Scientist", Color.parseColor("#1E88E5"), false));
+                    } else if ("Logician".equals(t)) {
+                        titleRow.addView(createBadge(x, "Logician", Color.parseColor("#43A047"), false));
+                    } else if ("Linguist".equals(t)) {
+                        titleRow.addView(createBadge(x, "Linguist", Color.parseColor("#AB47BC"), false));
                     }
                 }
             }

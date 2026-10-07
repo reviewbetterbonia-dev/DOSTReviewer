@@ -193,9 +193,10 @@ public class QuizFragment extends BaseFragment{
 
  private static String normalizeSubject(String s) {
   if (s == null || s.trim().isEmpty()) return "General";
-  if (s.equalsIgnoreCase("Math") || s.equalsIgnoreCase("Math")) return "Math";
-  if (s.equalsIgnoreCase("Machine Design")) return "Machine Design";
-  if (s.equalsIgnoreCase("Powerplant") || s.equalsIgnoreCase("Power Plant")) return "Powerplant";
+  if (s.equalsIgnoreCase("Math")) return "Math";
+  if (s.equalsIgnoreCase("Science") || s.equalsIgnoreCase("Machine Design")) return "Science";
+  if (s.equalsIgnoreCase("Reasoning") || s.equalsIgnoreCase("Powerplant") || s.equalsIgnoreCase("Power Plant")) return "Reasoning";
+  if (s.equalsIgnoreCase("English")) return "English";
   return s.trim();
  }
 

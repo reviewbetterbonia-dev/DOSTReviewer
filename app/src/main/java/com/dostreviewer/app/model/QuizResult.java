@@ -15,9 +15,9 @@ public class QuizResult {
             String s = subject.trim();
             if (!s.equalsIgnoreCase("Math") &&
                 !s.equalsIgnoreCase("Algebra") &&
-                !s.equalsIgnoreCase("Machine Design") &&
-                !s.equalsIgnoreCase("Powerplant") &&
-                !s.equalsIgnoreCase("Power Plant") &&
+                !s.equalsIgnoreCase("Science") &&
+                !s.equalsIgnoreCase("Reasoning") &&
+                !s.equalsIgnoreCase("English") &&
                 !s.equalsIgnoreCase("General") &&
                 !s.equalsIgnoreCase("HVAC") &&
                 !s.equalsIgnoreCase("All Subjects") &&

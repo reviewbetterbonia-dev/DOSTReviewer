@@ -762,25 +762,26 @@ public class FirebaseRepository {
             .addOnFailureListener(e -> cb.done(true));
     }
 
-    public interface TitlesCallback { void done(boolean isGoat, boolean isWizard, boolean isMechanic, boolean isAlchemist); }
+    public interface TitlesCallback { void done(boolean isGoat, boolean isWizard, boolean isScientist, boolean isLogician, boolean isLinguist); }
 
     public static class LeaderPlayer {
         public final String uid;
         public final String name;
-        public int rating, math, machineDesign, powerplant;
+        public int rating, math, science, reasoning, english;
         public LeaderPlayer(String uid, String name) {
             this.uid = uid; this.name = name;
         }
         public void add(String subject, int pts) {
             if ("Math".equals(subject)) math += pts;
-            else if ("Machine Design".equals(subject)) machineDesign += pts;
-            else if ("Powerplant".equals(subject)) powerplant += pts;
+            else if ("Science".equals(subject)) science += pts;
+            else if ("Reasoning".equals(subject)) reasoning += pts;
+            else if ("English".equals(subject)) english += pts;
         }
     }
 
     public void checkUserTitles(String uid, TitlesCallback cb) {
         if (!online || uid == null || uid.isEmpty()) {
-            cb.done(false, false, false, false);
+            cb.done(false, false, false, false, false);
             return;
         }
 
@@ -812,7 +813,7 @@ public class FirebaseRepository {
 
                 List<LeaderPlayer> players = new ArrayList<>(map.values());
                 if (players.isEmpty()) {
-                    cb.done(false, false, false, false);
+                    cb.done(false, false, false, false, false);
                     return;
                 }
 
@@ -822,22 +823,26 @@ public class FirebaseRepository {
                 Collections.sort(players, (a, b) -> Integer.compare(b.math, a.math));
                 boolean isWizard = !players.isEmpty() && players.get(0).uid.equals(uid) && players.get(0).math > 0;
 
-                Collections.sort(players, (a, b) -> Integer.compare(b.machineDesign, a.machineDesign));
-                boolean isMechanic = !players.isEmpty() && players.get(0).uid.equals(uid) && players.get(0).machineDesign > 0;
+                Collections.sort(players, (a, b) -> Integer.compare(b.science, a.science));
+                boolean isScientist = !players.isEmpty() && players.get(0).uid.equals(uid) && players.get(0).science > 0;
 
-                Collections.sort(players, (a, b) -> Integer.compare(b.powerplant, a.powerplant));
-                boolean isAlchemist = !players.isEmpty() && players.get(0).uid.equals(uid) && players.get(0).powerplant > 0;
+                Collections.sort(players, (a, b) -> Integer.compare(b.reasoning, a.reasoning));
+                boolean isLogician = !players.isEmpty() && players.get(0).uid.equals(uid) && players.get(0).reasoning > 0;
 
-                cb.done(isGoat, isWizard, isMechanic, isAlchemist);
-            }).addOnFailureListener(e -> cb.done(false, false, false, false));
-        }).addOnFailureListener(e -> cb.done(false, false, false, false));
+                Collections.sort(players, (a, b) -> Integer.compare(b.english, a.english));
+                boolean isLinguist = !players.isEmpty() && players.get(0).uid.equals(uid) && players.get(0).english > 0;
+
+                cb.done(isGoat, isWizard, isScientist, isLogician, isLinguist);
+            }).addOnFailureListener(e -> cb.done(false, false, false, false, false));
+        }).addOnFailureListener(e -> cb.done(false, false, false, false, false));
     }
 
     private static String displaySubjectStatic(String subject) {
         if (subject == null) return "";
-        if (subject.equalsIgnoreCase("Math") || subject.equalsIgnoreCase("Math")) return "Math";
-        if (subject.equalsIgnoreCase("Machine Design")) return "Machine Design";
-        if (subject.equalsIgnoreCase("Powerplant") || subject.equalsIgnoreCase("Power Plant")) return "Powerplant";
+        if (subject.equalsIgnoreCase("Math")) return "Math";
+        if (subject.equalsIgnoreCase("Science") || subject.equalsIgnoreCase("Machine Design")) return "Science";
+        if (subject.equalsIgnoreCase("Reasoning") || subject.equalsIgnoreCase("Powerplant") || subject.equalsIgnoreCase("Power Plant")) return "Reasoning";
+        if (subject.equalsIgnoreCase("English")) return "English";
         return subject;
     }
 
@@ -911,18 +916,25 @@ public class FirebaseRepository {
                     list.add("Wizard");
                 }
 
-                Collections.sort(players, (a, b) -> Integer.compare(b.machineDesign, a.machineDesign));
-                if (!players.isEmpty() && players.get(0).machineDesign > 0) {
+                Collections.sort(players, (a, b) -> Integer.compare(b.science, a.science));
+                if (!players.isEmpty() && players.get(0).science > 0) {
                     List<String> list = out.get(players.get(0).uid);
                     if (list == null) { list = new ArrayList<>(); out.put(players.get(0).uid, list); }
-                    list.add("Mechanic");
+                    list.add("Scientist");
                 }
 
-                Collections.sort(players, (a, b) -> Integer.compare(b.powerplant, a.powerplant));
-                if (!players.isEmpty() && players.get(0).powerplant > 0) {
+                Collections.sort(players, (a, b) -> Integer.compare(b.reasoning, a.reasoning));
+                if (!players.isEmpty() && players.get(0).reasoning > 0) {
                     List<String> list = out.get(players.get(0).uid);
                     if (list == null) { list = new ArrayList<>(); out.put(players.get(0).uid, list); }
-                    list.add("Alchemist");
+                    list.add("Logician");
+                }
+
+                Collections.sort(players, (a, b) -> Integer.compare(b.english, a.english));
+                if (!players.isEmpty() && players.get(0).english > 0) {
+                    List<String> list = out.get(players.get(0).uid);
+                    if (list == null) { list = new ArrayList<>(); out.put(players.get(0).uid, list); }
+                    list.add("Linguist");
                 }
 
                 cb.done(out);

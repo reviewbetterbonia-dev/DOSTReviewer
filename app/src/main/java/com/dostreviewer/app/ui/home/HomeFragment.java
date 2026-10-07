@@ -40,7 +40,7 @@ public class HomeFragment extends BaseFragment{
      hero.addView(titleBadgeContainer);
 
      if (!offline && a.user.uid != null && !a.user.uid.isEmpty()) {
-         a.firebase.checkUserTitles(a.user.uid, (isGoat, isWizard, isMechanic, isAlchemist) -> {
+         a.firebase.checkUserTitles(a.user.uid, (isGoat, isWizard, isScientist, isLogician, isLinguist) -> {
              if (!isAdded() || titleBadgeContainer == null) return;
              titleBadgeContainer.removeAllViews();
 
@@ -53,12 +53,16 @@ public class HomeFragment extends BaseFragment{
                  titleBadgeContainer.addView(createBadge(x, "Wizard", Color.parseColor("#E53935"), false));
                  hasAny = true;
              }
-             if (isMechanic) {
-                 titleBadgeContainer.addView(createBadge(x, "Mechanic", Color.parseColor("#1E88E5"), false));
+             if (isScientist) {
+                 titleBadgeContainer.addView(createBadge(x, "Scientist", Color.parseColor("#1E88E5"), false));
                  hasAny = true;
              }
-             if (isAlchemist) {
-                 titleBadgeContainer.addView(createBadge(x, "Alchemist", Color.parseColor("#43A047"), false));
+             if (isLogician) {
+                 titleBadgeContainer.addView(createBadge(x, "Logician", Color.parseColor("#43A047"), false));
+                 hasAny = true;
+             }
+             if (isLinguist) {
+                 titleBadgeContainer.addView(createBadge(x, "Linguist", Color.parseColor("#AB47BC"), false));
                  hasAny = true;
              }
 

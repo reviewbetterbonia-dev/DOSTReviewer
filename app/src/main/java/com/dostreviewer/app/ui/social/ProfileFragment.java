@@ -305,7 +305,7 @@ public class ProfileFragment extends BaseFragment {
     private void checkTitles(LinearLayout container) {
         if (container == null || app().isOffline()) return;
         container.removeAllViews();
-        app().firebase.checkUserTitles(targetUid, (isGoat, isWizard, isMechanic, isAlchemist) -> {
+        app().firebase.checkUserTitles(targetUid, (isGoat, isWizard, isScientist, isLogician, isLinguist) -> {
             if (!isAdded() || container == null) return;
             container.removeAllViews();
             Context x = requireContext();
@@ -316,11 +316,14 @@ public class ProfileFragment extends BaseFragment {
             if (isWizard) {
                 container.addView(createBadge(x, "Wizard", Color.parseColor("#E53935"), false));
             }
-            if (isMechanic) {
-                container.addView(createBadge(x, "Mechanic", Color.parseColor("#1E88E5"), false));
+            if (isScientist) {
+                container.addView(createBadge(x, "Scientist", Color.parseColor("#1E88E5"), false));
             }
-            if (isAlchemist) {
-                container.addView(createBadge(x, "Alchemist", Color.parseColor("#43A047"), false));
+            if (isLogician) {
+                container.addView(createBadge(x, "Logician", Color.parseColor("#43A047"), false));
+            }
+            if (isLinguist) {
+                container.addView(createBadge(x, "Linguist", Color.parseColor("#AB47BC"), false));
             }
         });
     }
@@ -435,14 +438,15 @@ public class ProfileFragment extends BaseFragment {
             correct += r.score;
             String sub = normalize(r.subject);
             if ("All Subjects".equalsIgnoreCase(sub) || sub.contains("Ranked") || sub.contains("All Subjects")) {
-                int thirdTotal = r.total / 3;
-                int thirdScore = r.score / 3;
-                int remTotal = r.total % 3;
-                int remScore = r.score % 3;
-                if (thirdTotal > 0 || r.total > 0) {
-                    getStat(stats, "Math").add(thirdScore + (remScore > 0 ? 1 : 0), thirdTotal + (remTotal > 0 ? 1 : 0));
-                    getStat(stats, "Machine Design").add(thirdScore, thirdTotal);
-                    getStat(stats, "Powerplant").add(thirdScore, thirdTotal);
+                int quarterTotal = r.total / 4;
+                int quarterScore = r.score / 4;
+                int remTotal = r.total % 4;
+                int remScore = r.score % 4;
+                if (quarterTotal > 0 || r.total > 0) {
+                    getStat(stats, "Math").add(quarterScore + (remScore > 0 ? 1 : 0), quarterTotal + (remTotal > 0 ? 1 : 0));
+                    getStat(stats, "Science").add(quarterScore, quarterTotal);
+                    getStat(stats, "Reasoning").add(quarterScore, quarterTotal);
+                    getStat(stats, "English").add(quarterScore, quarterTotal);
                 }
             } else {
                 getStat(stats, sub).add(r.score, r.total);
@@ -457,9 +461,10 @@ public class ProfileFragment extends BaseFragment {
 
     private String normalize(String s) {
         if (s == null || s.trim().isEmpty()) return "Uncategorized";
-        if (s.equalsIgnoreCase("Math") || s.equalsIgnoreCase("Math")) return "Math";
-        if (s.equalsIgnoreCase("Machine Design")) return "Machine Design";
-        if (s.equalsIgnoreCase("Powerplant") || s.equalsIgnoreCase("Power Plant")) return "Powerplant";
+        if (s.equalsIgnoreCase("Math")) return "Math";
+        if (s.equalsIgnoreCase("Science") || s.equalsIgnoreCase("Machine Design")) return "Science";
+        if (s.equalsIgnoreCase("Reasoning") || s.equalsIgnoreCase("Powerplant") || s.equalsIgnoreCase("Power Plant")) return "Reasoning";
+        if (s.equalsIgnoreCase("English")) return "English";
         return s;
     }
 
