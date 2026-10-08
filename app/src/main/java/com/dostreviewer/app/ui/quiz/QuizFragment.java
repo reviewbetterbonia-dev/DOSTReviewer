@@ -83,7 +83,11 @@ public class QuizFragment extends BaseFragment{
   if(pool.isEmpty()) throw new IllegalStateException("No questions match the selected quiz.");
   count=Math.min(count,pool.size());
   session=new ArrayList<>(pool.subList(0,count));
-  for(Question q:session) Collections.shuffle(q.answers);
+  for(Question q:session) {
+   if (!hasImage(q)) {
+    Collections.shuffle(q.answers);
+   }
+  }
   userAnswers.clear();
   for(int i=0;i<session.size();i++) userAnswers.add(-1);
   started=System.currentTimeMillis();
@@ -189,6 +193,17 @@ public class QuizFragment extends BaseFragment{
     finish();
    }
   }.start();
+ }
+
+ private static boolean hasImage(Question q) {
+  if (q == null) return false;
+  if (q.html != null && q.html.toLowerCase(Locale.US).contains("<img")) return true;
+  if (q.answers != null) {
+   for (Answer a : q.answers) {
+    if (a.html != null && a.html.toLowerCase(Locale.US).contains("<img")) return true;
+   }
+  }
+  return false;
  }
 
  private static String normalizeSubject(String s) {

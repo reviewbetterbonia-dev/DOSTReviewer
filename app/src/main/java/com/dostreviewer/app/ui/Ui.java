@@ -8,7 +8,7 @@ import android.graphics.drawable.Drawable;
 import java.io.InputStream;
 
 public final class Ui {
-    public static final int BG=Color.rgb(248,249,252), CARD=Color.WHITE, TEXT=Color.rgb(28,34,43), MUTED=Color.rgb(104,113,125), ACCENT=Color.rgb(83,76,202), ACCENT_DARK=Color.rgb(62,55,164), BORDER=Color.rgb(226,229,235), GREEN=Color.rgb(30,145,90), RED=Color.rgb(205,62,62);
+    public static final int BG=0xFFFEFEFE, CARD=Color.WHITE, TEXT=0xFF000000, MUTED=Color.rgb(104,113,125), ACCENT=0xFF21417A, ACCENT_DARK=0xFF172D54, BORDER=Color.rgb(226,229,235), GREEN=Color.rgb(30,145,90), RED=Color.rgb(205,62,62);
     private Ui(){}
     public static int dp(Context c,int n){return (int)(n*c.getResources().getDisplayMetrics().density+.5f);}
     public static LinearLayout page(Context c){LinearLayout l=new LinearLayout(c);l.setOrientation(LinearLayout.VERTICAL);l.setPadding(dp(c,20),dp(c,50),dp(c,20),dp(c,18));l.setBackgroundColor(BG);return l;}

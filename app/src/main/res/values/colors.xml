@@ -1,5 +1,5 @@
 <resources>
-    <color name="orange">#FF7C00</color>
-    <color name="cream">#FFF4E6</color>
-    <color name="dark_text">#080000</color>
+    <color name="accent">#21417a</color>
+    <color name="dark_text">#000000</color>
+    <color name="bg">#fefefe</color>
 </resources>
