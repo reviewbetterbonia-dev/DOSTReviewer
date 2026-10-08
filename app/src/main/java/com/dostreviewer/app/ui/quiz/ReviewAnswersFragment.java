@@ -52,7 +52,7 @@ public class ReviewAnswersFragment extends BaseFragment {
              for(int ansIdx = 0; ansIdx < q.answers.size(); ansIdx++){
                  Answer an = q.answers.get(ansIdx);
                  TextView ansView = new TextView(x);
-                 ansView.setText(Ui.fromHtml(an.html));
+                 ansView.setText(Ui.fromHtml(x, an.html));
                  ansView.setTextSize(15);
                  ansView.setPadding(Ui.dp(x, 12), Ui.dp(x, 10), Ui.dp(x, 12), Ui.dp(x, 10));
 

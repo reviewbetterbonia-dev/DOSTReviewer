@@ -112,7 +112,7 @@ public class CasualSearchFragment extends BaseFragment {
                 for (int ansIdx = 0; ansIdx < q.answers.size(); ansIdx++) {
                     Answer an = q.answers.get(ansIdx);
                     TextView ansView = new TextView(x);
-                    ansView.setText(Ui.fromHtml(((char)('A' + ansIdx)) + ". " + an.html));
+                    ansView.setText(Ui.fromHtml(x, ((char)('A' + ansIdx)) + ". " + an.html));
                     ansView.setTextSize(14);
                     ansView.setPadding(Ui.dp(x, 12), Ui.dp(x, 10), Ui.dp(x, 12), Ui.dp(x, 10));
 

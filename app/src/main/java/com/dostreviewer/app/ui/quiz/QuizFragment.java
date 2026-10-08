@@ -158,13 +158,13 @@ public class QuizFragment extends BaseFragment{
   Question q=session.get(index);
   if(progView!=null) progView.setText((index+1)+" / "+session.size());
   if(progressBar!=null) progressBar.setProgress(index);
-  if(questionTextView!=null) questionTextView.setText(Ui.fromHtml(q.html));
+  if(questionTextView!=null) questionTextView.setText(Ui.fromHtml(requireContext(), q.html));
   if(answers!=null){
    answers.clearCheck();
    answers.removeAllViews();
    for(Answer an:q.answers){
     RadioButton r=new RadioButton(requireContext());
-    r.setText(Ui.fromHtml(an.html));
+    r.setText(Ui.fromHtml(requireContext(), an.html));
     r.setTextSize(16);
     r.setPadding(Ui.dp(requireContext(),8),Ui.dp(requireContext(),8),Ui.dp(requireContext(),8),Ui.dp(requireContext(),8));
     answers.addView(r,new RadioGroup.LayoutParams(-1,Ui.dp(requireContext(),55)));
